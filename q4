@@ -1,3 +1,6 @@
+#include <iostream>
+usinf namespace std;
+
 void question4() {
     cout << "\n========== QUESTION 4: SEARCH AND INSERT ==========\n";
     IntBST tree;
@@ -19,4 +22,9 @@ void question4() {
         cout << "New tree (inorder): ";
         tree.inorderTraversal();
     }
+}
+
+int main(){
+question8();
+return 0;
 }
