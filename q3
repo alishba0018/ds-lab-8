@@ -1,3 +1,5 @@
+#include <iostream>
+using namespace std;
 struct Student {
     char name[50];
     int roll;
@@ -101,3 +103,28 @@ public:
         inorder(root);
     }
 };
+
+int main(){
+StudentBST studentTree;
+    Student students[] = {
+        Student("Alice", 1, 85),
+        Student("Bob", 2, 92),
+        Student("Charlie", 3, 8),
+        Student("Diana", 4, 78),
+        Student("Eve", 5, 88),
+        Student("Frank", 6, 5),
+        Student("Grace", 7, 95)
+    };
+    for (int i = 0; i < 7; i++) studentTree.insert(students[i]);
+    studentTree.displayAll();
+    cout << "\nSearching 'Bob': " << (studentTree.searchStudent("Bob") ? "Found" : "Not Found") << endl;
+    cout << "\nDeleting students with score < 10...\n";
+    studentTree.deleteByScoreLessThan(10);
+    studentTree.displayAll();
+    Student* maxStudent = studentTree.getMaxScoreStudent();
+    if (maxStudent) {
+        cout << "\nMax Score Student: " << maxStudent->name << " (" << maxStudent->score << ")\n";
+        delete maxStudent;
+    }
+    return 0;
+}
