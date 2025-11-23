@@ -1,0 +1,65 @@
+struct Product {
+    int id;
+    int quantity;
+    
+    Product(int i = 0, int q = 0) : id(i), quantity(q) {}
+    bool operator<(const Product& other) const { return id < other.id; }
+    bool operator>(const Product& other) const { return id > other.id; }
+    bool operator==(const Product& other) const { return id == other.id; }
+};
+
+struct ProductNode {
+    Product data;
+    ProductNode* left;
+    ProductNode* right;
+    
+    ProductNode(Product val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+class InventoryBST {
+private:
+    ProductNode* root;
+    
+    ProductNode* insertNode(ProductNode* node, Product val) {
+        if (node == nullptr) return new ProductNode(val);
+        if (val < node->data) node->left = insertNode(node->left, val);
+        else if (val > node->data) node->right = insertNode(node->right, val);
+        else node->data.quantity = val.quantity;
+        return node;
+    }
+    
+    ProductNode* searchNode(ProductNode* node, int id) {
+        if (node == nullptr) return nullptr;
+        if (node->data.id == id) return node;
+        if (id < node->data.id) return searchNode(node->left, id);
+        return searchNode(node->right, id);
+    }
+    
+    Product* maxQuantity(ProductNode* node, Product* current) {
+        if (node == nullptr) return current;
+        if (current == nullptr || node->data.quantity > current->quantity)
+            current = new Product(node->data.id, node->data.quantity);
+        Product* left = maxQuantity(node->left, current);
+        Product* right = maxQuantity(node->right, current);
+        if (left && left->quantity > current->quantity) {
+            delete current;
+            current = left;
+        } else if (left) delete left;
+        if (right && right->quantity > current->quantity) {
+            delete current;
+            current = right;
+        } else if (right) delete right;
+        return current;
+    }
+    
+public:
+    InventoryBST() : root(nullptr) {}
+    
+    void insert(Product p) { root = insertNode(root, p); }
+    void updateQuantity(int id, int newQty) {
+        ProductNode* node = searchNode(root, id);
+        if (node) node->data.quantity = newQty;
+    }
+    ProductNode* search(int id) { return searchNode(root, id); }
+    Product* getMaxQuantityProduct() { return maxQuantity(root, nullptr); }
+};
