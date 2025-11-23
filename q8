@@ -1,0 +1,27 @@
+#include <iostream>
+
+int countNodesInRange(IntNode* node, int a, int b) {
+    if (node == nullptr) return 0;
+    if (node->data < a) return countNodesInRange(node->right, a, b);
+    if (node->data > b) return countNodesInRange(node->left, a, b);
+    return 1 + countNodesInRange(node->left, a, b) + countNodesInRange(node->right, a, b);
+}
+
+void question8() {
+    cout << "\n========== QUESTION 8: COUNT NODES IN RANGE ==========\n";
+    IntBST tree;
+    int values[] = {40, 5, 45, 10, 30, 60};
+    for (int i = 0; i < 6; i++) tree.insert(values[i]);
+    
+    cout << "Tree (inorder): ";
+    tree.inorderTraversal();
+    
+    int a = 5, b = 45;
+    cout << "Nodes in range [" << a << ", " << b << "]: " 
+         << countNodesInRange(tree.getRoot(), a, b) << endl;
+}
+
+int main(){
+question8();
+return 0;
+}
