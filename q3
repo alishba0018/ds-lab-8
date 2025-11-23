@@ -1,0 +1,103 @@
+struct Student {
+    char name[50];
+    int roll;
+    int score;
+    
+    Student(const char* n = "", int r = 0, int s = 0) : roll(r), score(s) {
+        strcpy(name, n);
+    }
+    
+    bool operator<(const Student& other) const { return strcmp(name, other.name) < 0; }
+    bool operator>(const Student& other) const { return strcmp(name, other.name) > 0; }
+    bool operator==(const Student& other) const { return strcmp(name, other.name) == 0; }
+};
+
+struct StudentNode {
+    Student data;
+    StudentNode* left;
+    StudentNode* right;
+    
+    StudentNode(Student val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+class StudentBST {
+private:
+    StudentNode* root;
+    
+    StudentNode* insertNode(StudentNode* node, Student val) {
+        if (node == nullptr) return new StudentNode(val);
+        if (val < node->data) node->left = insertNode(node->left, val);
+        else node->right = insertNode(node->right, val);
+        return node;
+    }
+    
+    StudentNode* deleteNode(StudentNode* node, Student val) {
+        if (node == nullptr) return nullptr;
+        if (val < node->data) node->left = deleteNode(node->left, val);
+        else if (val > node->data) node->right = deleteNode(node->right, val);
+        else {
+            if (node->left == nullptr) return node->right;
+            if (node->right == nullptr) return node->left;
+            StudentNode* minRight = node->right;
+            while (minRight->left) minRight = minRight->left;
+            node->data = minRight->data;
+            node->right = deleteNode(node->right, minRight->data);
+        }
+        return node;
+    }
+    
+    StudentNode* searchNode(StudentNode* node, const char* name) {
+        if (node == nullptr) return nullptr;
+        if (strcmp(node->data.name, name) == 0) return node;
+        if (strcmp(name, node->data.name) < 0) return searchNode(node->left, name);
+        return searchNode(node->right, name);
+    }
+    
+    void inorder(StudentNode* node) {
+        if (node == nullptr) return;
+        inorder(node->left);
+        cout << "Name: " << node->data.name << ", Roll: " << node->data.roll 
+             << ", Score: " << node->data.score << endl;
+        inorder(node->right);
+    }
+    
+    void deleteByScore(StudentNode*& node, int threshold) {
+        if (node == nullptr) return;
+        deleteByScore(node->left, threshold);
+        deleteByScore(node->right, threshold);
+        if (node->data.score < threshold) {
+            node = deleteNode(node, node->data);
+        }
+    }
+    
+    Student* maxScore(StudentNode* node, Student* current) {
+        if (node == nullptr) return current;
+        if (current == nullptr || node->data.score > current->score) {
+            current = new Student(node->data.name, node->data.roll, node->data.score);
+        }
+        Student* left = maxScore(node->left, current);
+        Student* right = maxScore(node->right, current);
+        if (left && left->score > current->score) {
+            delete current;
+            current = left;
+        } else if (left) delete left;
+        if (right && right->score > current->score) {
+            delete current;
+            current = right;
+        } else if (right) delete right;
+        return current;
+    }
+    
+public:
+    StudentBST() : root(nullptr) {}
+    
+    void insert(Student s) { root = insertNode(root, s); }
+    void deleteStudent(Student s) { root = deleteNode(root, s); }
+    Student* searchStudent(const char* name) { return (Student*)searchNode(root, name); }
+    void deleteByScoreLessThan(int threshold) { deleteByScore(root, threshold); }
+    Student* getMaxScoreStudent() { return maxScore(root, nullptr); }
+    void displayAll() {
+        cout << "\n--- Student Records ---\n";
+        inorder(root);
+    }
+};
