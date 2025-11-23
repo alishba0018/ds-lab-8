@@ -1,3 +1,6 @@
+#include <iostream>
+using namespace std;
+
 void fillInorder(IntNode* node, int arr[], int& index) {
     if (node == nullptr) return;
     fillInorder(node->left, arr, index);
@@ -28,4 +31,9 @@ void question7() {
     cout << "Tree (inorder): ";
     tree.inorderTraversal();
     cout << "Median: " << findMedian(tree.getRoot()) << endl;
+}
+
+int main(){
+question8();
+return 0;
 }
