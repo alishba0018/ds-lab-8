@@ -1,0 +1,22 @@
+void question4() {
+    cout << "\n========== QUESTION 4: SEARCH AND INSERT ==========\n";
+    IntBST tree;
+    int values[] = {50, 30, 70, 20, 40, 60, 80};
+    for (int i = 0; i < 7; i++) tree.insert(values[i]);
+    
+    cout << "Original tree (inorder): ";
+    tree.inorderTraversal();
+    
+    int searchVal;
+    cout << "Enter value to search: ";
+    cin >> searchVal;
+    
+    if (tree.search(searchVal)) {
+        cout << "Value " << searchVal << " found!\n";
+    } else {
+        cout << "Value " << searchVal << " not found. Inserting...\n";
+        tree.insert(searchVal);
+        cout << "New tree (inorder): ";
+        tree.inorderTraversal();
+    }
+}
