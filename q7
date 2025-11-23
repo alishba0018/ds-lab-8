@@ -1,0 +1,31 @@
+void fillInorder(IntNode* node, int arr[], int& index) {
+    if (node == nullptr) return;
+    fillInorder(node->left, arr, index);
+    arr[index++] = node->data;
+    fillInorder(node->right, arr, index);
+}
+
+int countNodes(IntNode* node) {
+    if (node == nullptr) return 0;
+    return 1 + countNodes(node->left) + countNodes(node->right);
+}
+
+double findMedian(IntNode* root) {
+    int n = countNodes(root);
+    int arr[100];
+    int index = 0;
+    fillInorder(root, arr, index);
+    if (n % 2 == 1) return arr[n / 2];
+    return (arr[n / 2 - 1] + arr[n / 2]) / 2.0;
+}
+
+void question7() {
+    cout << "\n========== QUESTION 7: FIND MEDIAN ==========\n";
+    IntBST tree;
+    int values[] = {50, 30, 70, 20, 40, 60, 80};
+    for (int i = 0; i < 7; i++) tree.insert(values[i]);
+    
+    cout << "Tree (inorder): ";
+    tree.inorderTraversal();
+    cout << "Median: " << findMedian(tree.getRoot()) << endl;
+}
