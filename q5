@@ -1,0 +1,24 @@
+bool isBST(IntNode* node, int minVal, int maxVal) {
+    if (node == nullptr) return true;
+    if (node->data <= minVal || node->data >= maxVal) return false;
+    return isBST(node->left, minVal, node->data) && 
+           isBST(node->right, node->data, maxVal);
+}
+
+void question5() {
+    cout << "\n========== QUESTION 5: CHECK IF BST ==========\n";
+    
+    IntNode* tree1 = new IntNode(10);
+    tree1->left = new IntNode(5);
+    tree1->right = new IntNode(15);
+    tree1->left->left = new IntNode(3);
+    
+    IntNode* tree2 = new IntNode(10);
+    tree2->left = new IntNode(5);
+    tree2->right = new IntNode(15);
+    tree2->right->left = new IntNode(12);
+    tree2->right->left->left = new IntNode(20);
+    
+    cout << "Tree 1 is BST: " << (isBST(tree1, INT_MIN, INT_MAX) ? "YES" : "NO") << endl;
+    cout << "Tree 2 is BST: " << (isBST(tree2, INT_MIN, INT_MAX) ? "YES" : "NO") << endl;
+}
