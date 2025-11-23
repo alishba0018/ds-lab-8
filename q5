@@ -1,3 +1,6 @@
+#include<iostream>
+using namespace std;
+
 bool isBST(IntNode* node, int minVal, int maxVal) {
     if (node == nullptr) return true;
     if (node->data <= minVal || node->data >= maxVal) return false;
@@ -21,4 +24,9 @@ void question5() {
     
     cout << "Tree 1 is BST: " << (isBST(tree1, INT_MIN, INT_MAX) ? "YES" : "NO") << endl;
     cout << "Tree 2 is BST: " << (isBST(tree2, INT_MIN, INT_MAX) ? "YES" : "NO") << endl;
+}
+
+int main(){
+question8();
+return 0;
 }
