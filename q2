@@ -1,3 +1,5 @@
+#include <iostream>
+using namespace std;
 struct Combatant {
     char name[50];
     int hp;
@@ -159,3 +161,9 @@ public:
         else cout << "ENEMY TEAM WINS!\n";
     }
 };
+
+inr main(){
+BattleQuest game;
+game.startBattle();
+return 0;
+}
