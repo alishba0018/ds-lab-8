@@ -1,3 +1,5 @@
+#include <iostream>
+using namespace std;
 struct Product {
     int id;
     int quantity;
@@ -63,3 +65,20 @@ public:
     ProductNode* search(int id) { return searchNode(root, id); }
     Product* getMaxQuantityProduct() { return maxQuantity(root, nullptr); }
 };
+
+int main(){
+ InventoryBST inventory;
+    inventory.insert(Product(101, 50));
+    inventory.insert(Product(102, 30));
+    inventory.insert(Product(103, 100));
+    inventory.insert(Product(104, 25));
+    inventory.updateQuantity(102, 45);
+    Product* maxProd = inventory.getMaxQuantityProduct();
+    if (maxProd) {
+        cout << "Product with max quantity: ID=" << maxProd->id 
+             << ", Qty=" << maxProd->quantity << endl;
+        delete maxProd;
+    }
+    
+    return 0;
+}
