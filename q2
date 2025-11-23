@@ -1,0 +1,161 @@
+struct Combatant {
+    char name[50];
+    int hp;
+    int attackPower;
+    char id[10];
+    
+    Combatant(const char* n = "", int h = 0, int ap = 0, const char* i = "") 
+        : hp(h), attackPower(ap) {
+        strcpy(name, n);
+        strcpy(id, i);
+    }
+    
+    bool operator<(const Combatant& other) const { return strcmp(name, other.name) < 0; }
+    bool operator>(const Combatant& other) const { return strcmp(name, other.name) > 0; }
+    bool operator==(const Combatant& other) const { return strcmp(name, other.name) == 0; }
+};
+
+struct CombatantNode {
+    Combatant data;
+    CombatantNode* left;
+    CombatantNode* right;
+    
+    CombatantNode(Combatant val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+class CombatantBST {
+protected:
+    CombatantNode* root;
+    
+    CombatantNode* insertNode(CombatantNode* node, Combatant val) {
+        if (node == nullptr) return new CombatantNode(val);
+        if (val < node->data) node->left = insertNode(node->left, val);
+        else node->right = insertNode(node->right, val);
+        return node;
+    }
+    
+    CombatantNode* deleteNode(CombatantNode* node, Combatant val) {
+        if (node == nullptr) return nullptr;
+        if (val < node->data) node->left = deleteNode(node->left, val);
+        else if (val > node->data) node->right = deleteNode(node->right, val);
+        else {
+            if (node->left == nullptr) return node->right;
+            if (node->right == nullptr) return node->left;
+            CombatantNode* minRight = node->right;
+            while (minRight->left) minRight = minRight->left;
+            node->data = minRight->data;
+            node->right = deleteNode(node->right, minRight->data);
+        }
+        return node;
+    }
+    
+    int countNodes(CombatantNode* node) {
+        if (node == nullptr) return 0;
+        return 1 + countNodes(node->left) + countNodes(node->right);
+    }
+    
+    void displayTeam(CombatantNode* node) {
+        if (node == nullptr) return;
+        displayTeam(node->left);
+        cout << "  " << node->data.name << " (HP: " << node->data.hp << ") ";
+        displayTeam(node->right);
+    }
+    
+public:
+    CombatantBST() : root(nullptr) {}
+    
+    void insert(Combatant val) { root = insertNode(root, val); }
+    void deleteVal(Combatant val) { root = deleteNode(root, val); }
+    CombatantNode* getRoot() { return root; }
+    int getCount() { return countNodes(root); }
+    void display() { displayTeam(root); }
+    
+    CombatantNode* findMin(CombatantNode* node) {
+        if (node == nullptr) return nullptr;
+        while (node->left) node = node->left;
+        return node;
+    }
+    
+    CombatantNode* getMinNode() { return findMin(root); }
+};
+
+class BattleQuest {
+private:
+    CombatantBST playerTeam;
+    CombatantBST enemyTeam;
+    int round;
+    
+public:
+    BattleQuest() : round(0) {}
+    
+    void initializeBattle() {
+        playerTeam.insert(Combatant("Hero1", 100, 15, "P1"));
+        playerTeam.insert(Combatant("Hero2", 95, 18, "P2"));
+        playerTeam.insert(Combatant("Hero3", 110, 12, "P3"));
+        playerTeam.insert(Combatant("Hero4", 105, 16, "P4"));
+        playerTeam.insert(Combatant("Hero5", 100, 14, "P5"));
+        
+        enemyTeam.insert(Combatant("Enemy1", 90, 14, "E1"));
+        enemyTeam.insert(Combatant("Enemy2", 100, 15, "E2"));
+        enemyTeam.insert(Combatant("Enemy3", 95, 17, "E3"));
+        enemyTeam.insert(Combatant("Enemy4", 105, 13, "E4"));
+        enemyTeam.insert(Combatant("Enemy5", 98, 16, "E5"));
+    }
+    
+    void startBattle() {
+        initializeBattle();
+        round = 0;
+        
+        cout << "\n========== BATTLEQUEST: BST ARENA ==========\n\n";
+        
+        while (playerTeam.getCount() > 0 && enemyTeam.getCount() > 0) {
+            round++;
+            cout << "\n--- ROUND " << round << " ---\n";
+            
+            cout << "Player Heroes: ";
+            playerTeam.display();
+            cout << "\nEnemies: ";
+            enemyTeam.display();
+            cout << "\n\n";
+            
+            CombatantNode* playerFront = playerTeam.getMinNode();
+            CombatantNode* enemyFront = enemyTeam.getMinNode();
+            
+            if (!playerFront || !enemyFront) break;
+            
+            // Player attacks
+            int damage = playerFront->data.attackPower + (rand() % 5);
+            cout << playerFront->data.name << " attacks " << enemyFront->data.name 
+                 << " for " << damage << " damage!\n";
+            enemyFront->data.hp -= damage;
+            cout << enemyFront->data.name << " HP: " << enemyFront->data.hp << "\n";
+            
+            if (enemyFront->data.hp <= 0) {
+                cout << ">> " << enemyFront->data.name << " has been defeated!\n";
+                enemyTeam.deleteVal(enemyFront->data);
+            }
+            
+            if (enemyTeam.getCount() == 0) break;
+            
+            // Enemy counterattacks
+            enemyFront = enemyTeam.getMinNode();
+            playerFront = playerTeam.getMinNode();
+            if (enemyFront && playerFront) {
+                damage = enemyFront->data.attackPower + (rand() % 5);
+                cout << enemyFront->data.name << " counterattacks " << playerFront->data.name 
+                     << " for " << damage << " damage!\n";
+                playerFront->data.hp -= damage;
+                cout << playerFront->data.name << " HP: " << playerFront->data.hp << "\n";
+                
+                if (playerFront->data.hp <= 0) {
+                    cout << ">> " << playerFront->data.name << " has been defeated!\n";
+                    playerTeam.deleteVal(playerFront->data);
+                }
+            }
+        }
+        
+        cout << "\n========== BATTLE COMPLETE ==========\n";
+        if (playerTeam.getCount() > 0) cout << "PLAYER TEAM WINS!\n";
+        else cout << "ENEMY TEAM WINS!\n";
+    }
+};
